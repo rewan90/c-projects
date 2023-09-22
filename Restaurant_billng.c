@@ -64,6 +64,8 @@ int main()
     float total;
     int opt, n;
     struct orders order;
+    struct orders ordr;
+
     char saveBill = 'y';
     FILE *fp;
 
@@ -81,6 +83,7 @@ int main()
     switch (opt)
     {
     case 1:
+        system("clear");
         printf("\n please enter the name of the customer:\t");
         fgets(order.customer, 50, stdin);
         order.customer[strlen(order.customer) - 1] = 0; // use it to remove \n new line that fgets add
@@ -122,6 +125,26 @@ int main()
             fclose(fp);
         }
         break;
+
+    case 2:
+    {
+        system("clear");
+        fp = fopen("RestaurantBill.dat", "r");
+        printf("\n ***** your previous invoices *****\n");
+        while (fread(&ordr, sizeof(struct orders), 1, fp))
+        {
+            float total = 0;
+            generateBillHeader(order.customer, order.date);
+            for (int i = 0; i < order.numOfItems; i++)
+            {
+                generateBillBody(order.item[i].item, order.item[i].qty, order.item[i].price);
+                total += order.item[i].qty * order.item[i].price;
+            }
+            generateBillFooter(total);
+        };
+        fclose(fp);
+    };
+    break;
     };
 
     return 0;
